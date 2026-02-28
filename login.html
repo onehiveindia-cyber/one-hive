@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="One_Hive - Tab.png">
+    <title>OneHive | System Login</title>
+    <!-- Plus Jakarta Sans for premium SaaS typography -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-init.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #050b14;
+            --bg-gradient: radial-gradient(circle at 10% 90%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 90% 10%, rgba(37, 99, 235, 0.05) 0%, transparent 40%);
+            --text-primary: #FFFFFF;
+            --text-secondary: #9CA3AF;
+            --accent: #3B82F6;
+            --accent-hover: #2563EB;
+            --surface: rgba(255, 255, 255, 0.02);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(59, 130, 246, 0.5);
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --radius-pill: 9999px;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        :root.light-theme {
+            --bg-base: #ffffff;
+            --bg-gradient: radial-gradient(circle at 80% -20%, rgba(249, 115, 22, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 20% 100%, rgba(249, 115, 22, 0.04) 0%, transparent 40%);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --surface: rgba(0, 0, 0, 0.03);
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --border-active: rgba(249, 115, 22, 0.5);
+        }
+
+        /* --- MODERN GLOBAL SCROLLBAR --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--accent), var(--accent-hover));
+            border-radius: 10px;
+            border: 2px solid var(--bg-base);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-hover);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        :root.light-theme .theme-toggle {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        :root.light-theme .theme-toggle:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient floating shapes */
+        .ambient-shape-1 {
+            position: absolute;
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .ambient-shape-2 {
+            position: absolute;
+            bottom: -10%;
+            left: -5%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .box {
+            background: var(--surface);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            padding: 56px 48px;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-subtle);
+            position: relative;
+            z-index: 10;
+        }
+
+        :root.light-theme .box {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            color: var(--text-primary);
+            margin-bottom: 40px;
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        h2 i {
+            color: var(--accent);
+            font-style: normal;
+            font-weight: 300;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        :root.light-theme input {
+            background: rgba(0, 0, 0, 0.02);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        input::placeholder {
+            color: #6B7280;
+            font-weight: 400;
+        }
+
+        input:focus {
+            border-color: var(--border-active);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        :root.light-theme input:focus {
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        p {
+            font-size: 14px;
+            margin-top: 32px;
+            color: var(--text-secondary);
+        }
+
+        a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        a:hover {
+            color: var(--accent);
+        }
+
+        .home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 32px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-decoration: none;
+            border: 1px solid var(--border-subtle);
+            padding: 8px 16px;
+            border-radius: var(--radius-pill);
+            transition: 0.3s;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        :root.light-theme .home-link {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .home-link:hover {
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 1024px) {
+            .box {
+                max-width: 400px;
+                padding: 48px 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+                background-attachment: scroll;
+                /* Performance on mobile */
+            }
+
+            .ambient-shape-1,
+            .ambient-shape-2 {
+                display: none;
+                /* Reduce visual noise on mobile */
+            }
+
+            .box {
+                padding: 40px 24px;
+                border-radius: 20px;
+            }
+
+            h2 {
+                font-size: 28px;
+                margin-bottom: 32px;
+            }
+
+            input {
+                padding: 14px 16px;
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+
+            button {
+                padding: 14px;
+                font-size: 15px;
+            }
+        }
+
+        @media(max-width: 480px) {
+            body {
+                padding: 16px;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .box {
+                padding: 32px 20px;
+                border: 1px solid var(--border-subtle);
+                background: rgba(15, 23, 42, 0.7);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+                height: auto;
+                display: block;
+                border-radius: var(--radius-lg);
+            }
+
+            h2 {
+                font-size: 26px;
+                margin-bottom: 24px;
+            }
+
+            .home-link {
+                margin-top: 32px;
+                width: fit-content;
+                align-self: center;
+            }
+        }
+    </style>
+    <!-- Hide Google Translate Banner completely -->
+    <style>
+        .goog-te-banner-frame.skiptranslate,
+        .goog-te-banner-frame,
+        .goog-te-gadget-icon,
+        #goog-gt-tt,
+        .VIpgJd-Zvi9od-ORHb-OEVmcd,
+        .VIpgJd-Zvi9od-aZ2wEe-wOHMyf {
+            display: none !important;
+            visibility: hidden !important;
+        }
+
+        body {
+            top: 0px !important;
+            position: static !important;
+        }
+
+        .goog-tooltip,
+        .goog-tooltip:hover {
+            display: none !important;
+        }
+
+        .goog-text-highlight {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Theme">
+        <i class="fas fa-sun"></i>
+    </button>
+    <div class="ambient-shape-1"></div>
+    <div class="ambient-shape-2"></div>
+
+    <div class="box">
+        <h2><i>User</i> Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email Address">
+        <input type="password" id="loginPass" placeholder="Password">
+
+        <button onclick="loginUser()">Login</button>
+
+        <p>New user? <a href="register.html">Create Account</a></p>
+        <p style="margin-top: 12px;"><a href="forgot-password.html"
+                style="color: var(--text-secondary); font-weight: 500; font-size: 14px; transition: color 0.3s;"
+                onmouseover="this.style.color='var(--accent)'"
+                onmouseout="this.style.color='var(--text-secondary)'">Forgot Password?</a></p>
+        <a href="index.html" class="home-link"><i class="fas fa-arrow-left"></i> Go Back</a>
+    </div>
+
+    <!-- Logic completely preserved -->
+    <script>
+        async function loginUser() {
+            let email = document.getElementById('loginEmail').value.trim();
+            let password = document.getElementById('loginPass').value.trim();
+
+            if (!email || !password) { alert("Please enter email and password."); return; }
+
+            // Query Supabase for the user
+            const { data: user, error } = await window.supabaseClient
+                .from('users')
+                .select('*')
+                .eq('email', email.toLowerCase())
+                .eq('password', password)
+                .single();
+
+            if (error) {
+                if (error.code === 'PGRST116') { // No rows found
+                    alert("Wrong email or password, or user doesn't exist.");
+                } else {
+                    alert("Login error: " + error.message);
+                }
+                return;
+            }
+
+            if (user) {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userName', user.name);
+                localStorage.setItem('currentUserEmail', user.email);
+                const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=3B82F6&color=fff`;
+                localStorage.setItem('currentUserAvatar', user.avatar_url || fallbackAvatar);
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const returnUrl = urlParams.get('returnUrl');
+
+                alert("Login successful! Welcome back, " + user.name);
+
+                if (returnUrl) {
+                    window.location.href = decodeURIComponent(returnUrl);
+                } else {
+                    window.location.href = "user-dashboard.html";
+                }
+            }
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+            const themeBtnIcon = document.querySelector('#themeToggleBtn i');
+
+            if (savedTheme === 'light' || (!savedTheme && prefersLight)) {
+                document.documentElement.classList.add('light-theme');
+                if (themeBtnIcon) {
+                    themeBtnIcon.classList.remove('fa-sun');
+                    themeBtnIcon.classList.add('fa-moon');
+                }
+            }
+        }
+
+        function toggleTheme() {
+            const htmlEl = document.documentElement;
+            const themeBtnIcon = document.querySelector('#themeToggleBtn i');
+
+            if (htmlEl.classList.contains('light-theme')) {
+                htmlEl.classList.remove('light-theme');
+                localStorage.setItem('theme', 'dark');
+                if (themeBtnIcon) {
+                    themeBtnIcon.classList.remove('fa-moon');
+                    themeBtnIcon.classList.add('fa-sun');
+                }
+            } else {
+                htmlEl.classList.add('light-theme');
+                localStorage.setItem('theme', 'light');
+                if (themeBtnIcon) {
+                    themeBtnIcon.classList.remove('fa-sun');
+                    themeBtnIcon.classList.add('fa-moon');
+                }
+            }
+        }
+
+        // Initialize theme on load
+        initTheme();
+    </script>
+    <!-- Hidden Google Translate Element -->
+    <div id="google_translate_element" style="display:none;"></div>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({ pageLanguage: 'en', autoDisplay: false }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript"
+        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+
+</html>

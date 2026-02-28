@@ -1,0 +1,5 @@
+node_modules/
+.env
+ONEHIVE_FULL_CODE.txt
+*.log
+.DS_Store

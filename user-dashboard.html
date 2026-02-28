@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="One_Hive - Tab.png">
+    <title>OneHive | User Dashboard</title>
+    <!-- Plus Jakarta Sans -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-init.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #050b14;
+            --bg-gradient: radial-gradient(circle at 10% 90%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 90% 10%, rgba(37, 99, 235, 0.05) 0%, transparent 40%);
+            --text-primary: #FFFFFF;
+            --text-secondary: #9CA3AF;
+            --accent: #3B82F6;
+            --accent-hover: #2563EB;
+            --surface: rgba(255, 255, 255, 0.03);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --radius-pill: 9999px;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --success: #10B981;
+            --warning: #F59E0B;
+        }
+
+        :root.light-theme {
+            --bg-base: #ffffff;
+            --bg-gradient: radial-gradient(circle at 80% -20%, rgba(249, 115, 22, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 20% 100%, rgba(249, 115, 22, 0.04) 0%, transparent 40%);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --surface: rgba(0, 0, 0, 0.03);
+            --border-subtle: rgba(0, 0, 0, 0.08);
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        :root.light-theme .theme-toggle {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        :root.light-theme .theme-toggle:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html,
+        body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        /* Ambient shapes */
+        .ambient-shape-1 {
+            position: absolute;
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        /* --- DASHBOARD LAYOUT --- */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 48px;
+        }
+
+        .welcome-box h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .welcome-box p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        :root.light-theme .btn-home {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        :root.light-theme .btn-logout {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .btn-home {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 20px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-pill);
+            transition: 0.3s;
+        }
+
+        .btn-home:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+            padding: 10px 20px;
+            border-radius: var(--radius-pill);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        /* --- DASHBOARD GRID --- */
+        .grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 32px;
+        }
+
+        /* --- PROFILE CARD --- */
+        .profile-card {
+            background: var(--surface);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 40px 32px;
+            text-align: center;
+            position: sticky;
+            top: 40px;
+            height: fit-content;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        :root.light-theme .profile-card {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 24px;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-subtle);
+            background: var(--surface);
+        }
+
+        .avatar-overlay {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--accent);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: 4px solid var(--bg-base);
+            transition: 0.3s;
+            color: white;
+            font-size: 14px;
+        }
+
+        .avatar-overlay:hover {
+            background: var(--accent-hover);
+            transform: scale(1.1);
+        }
+
+        .profile-info h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .stats-min {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .stat-item span {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-item strong {
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        /* --- CONTENT AREA --- */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .section-card {
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        :root.light-theme .section-card {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h3 i {
+            color: var(--accent);
+        }
+
+        /* --- ORDERS LIST --- */
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+
+        :root.light-theme .order-item {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .order-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        :root.light-theme .order-item:hover {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .order-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .order-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+        }
+
+        .order-details h4 {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .order-details span {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .order-status {
+            padding: 6px 12px;
+            border-radius: var(--radius-pill);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-completed {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 0;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 40px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Hidden File Input */
+        #avatarInput {
+            display: none;
+        }
+
+        @media(max-width: 992px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-card {
+                position: relative;
+                top: 0;
+            }
+        }
+
+        @media(max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 24px;
+                margin-bottom: 32px;
+            }
+
+            .nav-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .section-card {
+                padding: 24px 20px;
+            }
+        }
+
+        @media(max-width: 480px) {
+            .dashboard-container {
+                padding: 24px 16px;
+            }
+
+            .welcome-box h1 {
+                font-size: 26px;
+            }
+
+            .nav-actions {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn-home,
+            .btn-logout {
+                width: 100%;
+                text-align: center;
+            }
+
+            .profile-card {
+                padding: 32px 20px;
+            }
+
+            .avatar-container {
+                width: 100px;
+                height: 100px;
+            }
+
+            .stats-min {
+                gap: 16px;
+            }
+
+            .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .order-meta {
+                width: 100%;
+            }
+
+            .order-item>div:last-child {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+    <!-- Hide Google Translate Banner completely -->
+    <style>
+        .goog-te-banner-frame.skiptranslate,
+        .goog-te-banner-frame,
+        .goog-te-gadget-icon,
+        #goog-gt-tt,
+        .VIpgJd-Zvi9od-ORHb-OEVmcd,
+        .VIpgJd-Zvi9od-aZ2wEe-wOHMyf {
+            display: none !important;
+            visibility: hidden !important;
+        }
+
+        body {
+            top: 0px !important;
+            position: static !important;
+        }
+
+        .goog-tooltip,
+        .goog-tooltip:hover {
+            display: none !important;
+        }
+
+        .goog-text-highlight {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ambient-shape-1"></div>
+
+    <div class="dashboard-container">
+        <header class="header">
+            <div class="welcome-box">
+                <h1>Hello, <span id="userName">User</span></h1>
+                <p>Welcome to your OneHive Command Center.</p>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Theme">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <a href="index.html" class="btn-home">Home</a>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- PROFILE SIDEBAR -->
+            <aside class="profile-card">
+                <div class="avatar-container">
+                    <img id="avatarDisplay" src="https://ui-avatars.com/api/?name=User&background=random"
+                        class="avatar-img" alt="User Avatar">
+                    <label for="avatarInput" class="avatar-overlay">
+                        <i class="fas fa-camera"></i>
+                    </label>
+                    <input type="file" id="avatarInput" accept="image/*" onchange="uploadAvatar(this)">
+                </div>
+
+                <div class="profile-info">
+                    <h2 id="fullNameDisplay">Loading...</h2>
+                    <p id="emailDisplay">email@example.com</p>
+                </div>
+
+                <div class="stats-min">
+                    <div class="stat-item">
+                        <span>Total Orders</span>
+                        <strong id="totalOrders">0</strong>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <main class="main-content">
+                <!-- QUICK ACTIONS -->
+                <section class="section-card">
+                    <div class="section-header">
+                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px;">
+                        <a href="service.html?service=Electrician" class="btn-home"
+                            style="text-align:center; padding: 12px;">Electrician</a>
+                        <a href="service.html?service=Plumber" class="btn-home"
+                            style="text-align:center; padding: 12px;">Plumber</a>
+                        <a href="service.html?service=AC Repair" class="btn-home"
+                            style="text-align:center; padding: 12px;">AC Repair</a>
+                        <a href="service.html?service=Cleaning" class="btn-home"
+                            style="text-align:center; padding: 12px;">Cleaning</a>
+                    </div>
+                </section>
+
+                <!-- RECENT ACTIVITY -->
+                <section class="section-card">
+                    <div class="section-header">
+                        <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                        <button onclick="initDashboard()"
+                            style="background:none; border:none; color:var(--text-secondary); cursor:pointer; font-size:13px;"><i
+                                class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+                    <div id="orderHistoryList">
+                        <!-- Orders will be loaded here -->
+                        <div class="empty-state">
+                            <i class="fas fa-box-open"></i>
+                            <p>No services booked yet.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ACCOUNT DETAILS -->
+                <section class="section-card">
+                    <div class="section-header">
+                        <h3><i class="fas fa-user-gear"></i> Account Settings</h3>
+                    </div>
+                    <div style="font-size: 14px; color: var(--text-secondary);">
+                        <div style="margin-bottom: 12px; display: flex; justify-content: space-between;">
+                            <span>Member Since:</span>
+                            <span id="memberSince" style="color: var(--text-primary);">...</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Auth Status:</span>
+                            <span style="color: var(--success);">Verified Partner Connect</span>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const SB = window.supabaseClient;
+
+        // Redirect if not logged in
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = "login.html";
+        }
+
+        async function initDashboard() {
+            const email = localStorage.getItem('currentUserEmail');
+            if (!email) return;
+
+            // 1. Fetch User Data
+            const { data: user, error } = await SB
+                .from('users')
+                .select('*')
+                .eq('email', email)
+                .single();
+
+            if (user) {
+                document.getElementById('userName').innerText = user.name.split(' ')[0];
+                document.getElementById('fullNameDisplay').innerText = user.name;
+                document.getElementById('emailDisplay').innerText = user.email;
+                document.getElementById('memberSince').innerText = new Date(user.created_at).toLocaleDateString();
+
+                if (user.avatar_url) {
+                    document.getElementById('avatarDisplay').src = user.avatar_url;
+                    localStorage.setItem('currentUserAvatar', user.avatar_url);
+                } else {
+                    const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=3B82F6&color=fff`;
+                    document.getElementById('avatarDisplay').src = fallback;
+                    localStorage.setItem('currentUserAvatar', fallback);
+                }
+            }
+
+            // 2. Fetch Order History
+            await loadOrders(email);
+        }
+
+        async function loadOrders(email) {
+            const { data: orders, error } = await SB
+                .from('orders')
+                .select('*')
+                .eq('user_email', email)
+                .order('created_at', { ascending: false });
+
+            const list = document.getElementById('orderHistoryList');
+            if (orders && orders.length > 0) {
+                document.getElementById('totalOrders').innerText = orders.length;
+                list.innerHTML = orders.map(o => `
+                    <div class="order-item">
+                        <div class="order-meta">
+                            <div class="order-icon"><i class="fas ${getIcon(o.service_name)}"></i></div>
+                            <div class="order-details">
+                                <h4>${o.service_name}</h4>
+                                <span>${new Date(o.created_at).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            ${o.status === 'completed' || o.status === 'pending' ? `<button onclick="leaveReview('${o.id}')" style="background:var(--accent); color:white; border:none; padding:6px 12px; border-radius:12px; font-size:11px; cursor:pointer;">Review</button>` : ''}
+                            <div class="order-status status-${o.status}">${o.status}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        async function leaveReview(orderId) {
+            const review = prompt("Please enter your review (1-5 stars or feedback):");
+            if (review) {
+                // 1. Fetch current order to get existing details
+                const { data: order } = await SB.from('orders').select('details').eq('id', orderId).single();
+                const currentDetails = order?.details || {};
+
+                // 2. Merge new review into details
+                const updatedDetails = { ...currentDetails, review: review };
+
+                // 3. Update the order
+                const { error } = await SB.from('orders').update({ details: updatedDetails }).eq('id', orderId);
+
+                if (!error) {
+                    alert("Thank you for your feedback! Your review has been submitted.");
+                } else {
+                    console.error("Review update error:", error);
+                }
+            }
+        }
+
+        function getIcon(service) {
+            const s = service.toLowerCase();
+            if (s.includes('ac')) return 'fa-snowflake';
+            if (s.includes('elect')) return 'fa-bolt';
+            if (s.includes('plum')) return 'fa-faucet';
+            if (s.includes('clean')) return 'fa-broom';
+            if (s.includes('paint')) return 'fa-paint-roller';
+            return 'fa-tools';
+        }
+
+        async function uploadAvatar(input) {
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+            const email = localStorage.getItem('currentUserEmail');
+
+            // For PROTOTYPE: Convert image to Base64 (to avoid setting up Supabase Storage buckets)
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                const base64Img = e.target.result;
+
+                const { error } = await SB
+                    .from('users')
+                    .update({ avatar_url: base64Img })
+                    .eq('email', email);
+
+                if (!error) {
+                    document.getElementById('avatarDisplay').src = base64Img;
+                    localStorage.setItem('currentUserAvatar', base64Img);
+                    alert("Profile picture updated!");
+                } else {
+                    console.error("Upload error details:", error);
+                    let msg = error.message || "Unknown error";
+                    if (msg.includes('column') || msg.includes('schema cache')) {
+                        alert(`SCHEMA ERROR: ${msg}\n\n1. Ensure you ran the SQL patch in Supabase.\n2. TRY REFRESHING THIS PAGE (F5) to clear the Supabase schema cache.`);
+                    } else {
+                        alert("UPLOAD FAILED: " + msg);
+                    }
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+
+        initDashboard();
+    </script>
+    <!-- Hidden Google Translate Element -->
+    <div id="google_translate_element" style="display:none;"></div>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({ pageLanguage: 'en', autoDisplay: false }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript"
+        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+
+</html>

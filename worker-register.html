@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/x-icon" href="One_Hive - Tab.png">
+    <title>OneHive | Partner Registration</title>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript"> (function () { emailjs.init("ABkWJi8hB94_iu6Pq"); })(); </script>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-init.js"></script>
+
+    <!-- Plus Jakarta Sans -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #050b14;
+            --bg-gradient: radial-gradient(circle at 50% 10%, rgba(37, 99, 235, 0.15) 0%, transparent 60%);
+            --text-primary: #FFFFFF;
+            --text-secondary: #9CA3AF;
+            --accent: #3B82F6;
+            --accent-hover: #2563EB;
+            --surface: rgba(15, 23, 42, 0.6);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(59, 130, 246, 0.5);
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --radius-pill: 9999px;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --success: #10B981;
+            --error: #EF4444;
+        }
+
+        :root.light-theme {
+            --bg-base: #ffffff;
+            --bg-gradient: radial-gradient(circle at 80% -20%, rgba(249, 115, 22, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 20% 100%, rgba(249, 115, 22, 0.04) 0%, transparent 40%);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --surface: rgba(0, 0, 0, 0.03);
+            --border-subtle: rgba(0, 0, 0, 0.08);
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        :root.light-theme .theme-toggle {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        :root.light-theme .theme-toggle:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- MODERN GLOBAL SCROLLBAR --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--accent), var(--accent-hover));
+            border-radius: 10px;
+            border: 2px solid var(--bg-base);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-hover);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html,
+        body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        header {
+            background: rgba(5, 11, 20, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 24px 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        :root.light-theme header {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .nav-logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: white;
+            padding: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-logo-icon img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 4px;
+        }
+
+        .logo-subtext {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .logo-subtext span {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .back-btn {
+            padding: 10px 20px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-pill);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            transition: 0.3s;
+            background: rgba(255, 255, 255, 0.02);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 64px auto 100px;
+            background: var(--surface);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+            padding: 64px 48px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        :root.light-theme .container {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .form-title h2 {
+            font-size: 36px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .form-title h2 i {
+            font-style: normal;
+            font-weight: 300;
+            color: var(--accent);
+        }
+
+        .form-subtitle {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-tagline {
+            font-size: 15px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .section-heading {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 12px;
+            margin-top: 48px;
+            margin-bottom: 24px;
+        }
+
+        .row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 240px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-primary);
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        :root.light-theme input,
+        :root.light-theme select,
+        :root.light-theme textarea {
+            background: rgba(0, 0, 0, 0.02);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- MODERN NUMBER INPUT --- */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .custom-counter {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: 0.3s;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        :root.light-theme .custom-counter {
+            background: rgba(0, 0, 0, 0.02);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .custom-counter:focus-within {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        :root.light-theme .custom-counter:focus-within {
+            background: rgba(249, 115, 22, 0.05);
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1), inset 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .counter-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: none;
+            color: var(--accent);
+            width: 54px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.2s;
+            user-select: none;
+        }
+
+        :root.light-theme .counter-btn {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .counter-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--text-primary);
+        }
+
+        :root.light-theme .counter-btn:hover {
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .counter-btn:active {
+            transform: scale(0.95);
+        }
+
+        .custom-counter input {
+            border: none;
+            background: transparent;
+            text-align: center;
+            padding: 0;
+            height: 54px;
+            box-shadow: none;
+            width: 100%;
+        }
+
+        /* --- CUSTOM SELECT COMPONENT --- */
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select-trigger {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        :root.light-theme .custom-select-trigger {
+            background: rgba(0, 0, 0, 0.02);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .custom-select-trigger::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 12px;
+            color: var(--accent);
+            transition: 0.3s;
+        }
+
+        .custom-select-wrapper.open .custom-select-trigger::after {
+            transform: rotate(180deg);
+        }
+
+        .custom-select-options {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 8px;
+            list-style: none;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        :root.light-theme .custom-select-options {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-option {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: 0.2s;
+        }
+
+        .custom-option:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--text-primary);
+        }
+
+        :root.light-theme .custom-option:hover {
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        /* --- CUSTOM CALENDAR COMPONENT --- */
+        .custom-datepicker-wrapper {
+            position: relative;
+        }
+
+        .calendar-popup {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            z-index: 150;
+            width: 320px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: 0.3s;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        :root.light-theme .calendar-popup {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar-popup.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        :root.light-theme .nav-btn {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .nav-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        :root.light-theme .nav-btn:hover {
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+        }
+
+        .day-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            padding-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .calendar-day {
+            padding: 8px 0;
+            font-size: 13px;
+            cursor: pointer;
+            border-radius: 8px;
+            color: var(--text-primary);
+            transition: 0.2s;
+        }
+
+        .calendar-day:hover:not(.empty) {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent);
+        }
+
+        :root.light-theme .calendar-day:hover:not(.empty) {
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .calendar-day.selected {
+            background: var(--accent) !important;
+            color: white !important;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        :root.light-theme .calendar-day.selected {
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+        }
+
+        .calendar-day.today {
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .calendar-day.empty {
+            cursor: default;
+        }
+
+        input[type="date"] {
+            display: none;
+        }
+
+        select {
+            display: none;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #4B5563;
+        }
+
+        input:focus,
+        textarea:focus,
+        .custom-select-trigger:focus,
+        .custom-select-wrapper.open .custom-select-trigger {
+            border-color: var(--border-active);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        :root.light-theme input:focus,
+        :root.light-theme textarea:focus,
+        :root.light-theme .custom-select-trigger:focus,
+        :root.light-theme .custom-select-wrapper.open .custom-select-trigger {
+            background: rgba(0, 0, 0, 0.04);
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1), inset 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .checkbox-container input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            margin: 0;
+            accent-color: var(--accent);
+        }
+
+        .error-msg {
+            display: none;
+            color: var(--error);
+            font-size: 12px;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .loading-text {
+            display: none;
+            color: var(--accent);
+            font-size: 12px;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .input-error {
+            border: 1px solid var(--error) !important;
+            background: rgba(239, 68, 68, 0.05) !important;
+        }
+
+        :root.light-theme .input-error {
+            background: rgba(220, 38, 38, 0.05) !important;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 32px;
+            transition: 0.3s;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        :root.light-theme .btn-submit {
+            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.3);
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4);
+        }
+
+        :root.light-theme .btn-submit:hover {
+            box-shadow: 0 15px 35px rgba(249, 115, 22, 0.4);
+        }
+
+        .success-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: var(--success);
+            margin-bottom: 24px;
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 0 0 40px rgba(16, 185, 129, 0.4);
+        }
+
+        :root.light-theme .success-icon {
+            text-shadow: 0 0 40px rgba(22, 163, 74, 0.4);
+        }
+
+        .success-screen h2 {
+            font-size: 32px;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+            font-weight: 600;
+        }
+
+        .app-id-box {
+            background: rgba(16, 185, 129, 0.05);
+            color: var(--success);
+            padding: 12px 24px;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-block;
+            margin-bottom: 24px;
+            border: 1px dashed rgba(16, 185, 129, 0.4);
+        }
+
+        :root.light-theme .app-id-box {
+            background: rgba(22, 163, 74, 0.05);
+            border: 1px dashed rgba(22, 163, 74, 0.4);
+        }
+
+        .btn-home {
+            display: inline-block;
+            padding: 16px 32px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border-radius: var(--radius-pill);
+            border: 1px solid var(--border-subtle);
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 24px;
+            transition: 0.3s;
+        }
+
+        :root.light-theme .btn-home {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .btn-home:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        :root.light-theme .btn-home:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @media(max-width: 768px) {
+            header {
+                padding: 16px 24px;
+            }
+
+            .container {
+                padding: 40px 24px;
+                border-radius: 16px;
+                margin: 32px 16px 100px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            }
+
+            .row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-title h2 {
+                font-size: 28px;
+            }
+        }
+
+        @media(max-width: 480px) {
+            header {
+                padding: 12px 16px;
+            }
+
+            .container {
+                padding: 24px 16px;
+                margin: 16px 8px 100px;
+                border-radius: 12px;
+            }
+
+            .form-title h2 {
+                font-size: 24px;
+            }
+
+            .form-title p {
+                font-size: 14px;
+            }
+
+            .section-heading {
+                font-size: 18px;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="number"],
+            .custom-select-trigger {
+                padding: 14px 16px;
+            }
+
+            .calendar-popup {
+                width: 100%;
+                left: 0;
+                right: 0;
+            }
+        }
+    </style>
+    <!-- Hide Google Translate Banner completely -->
+    <style>
+        .goog-te-banner-frame.skiptranslate,
+        .goog-te-banner-frame,
+        .goog-te-gadget-icon,
+        #goog-gt-tt,
+        .VIpgJd-Zvi9od-ORHb-OEVmcd,
+        .VIpgJd-Zvi9od-aZ2wEe-wOHMyf {
+            display: none !important;
+            visibility: hidden !important;
+        }
+
+        body {
+            top: 0px !important;
+            position: static !important;
+        }
+
+        .goog-tooltip,
+        .goog-tooltip:hover {
+            display: none !important;
+        }
+
+        .goog-text-highlight {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="index.html" class="nav-logo" style="gap: 0; margin-left: -32px;">
+            <img src="One_Hive.png" alt="OneHive"
+                style="height: 120px; width: auto; filter: drop-shadow(0px 0px 12px rgba(255, 255, 255, 0.15));"
+                onerror="this.style.display='none'">
+            </div>
+        </a>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Theme">
+                <i class="fas fa-sun"></i>
+            </button>
+            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Home</a>
+        </div>
+    </header>
+
+    <div class="container" id="formContainer">
+        <div class="form-title">
+            <div class="form-subtitle"><i class="fas fa-handshake"></i> Partner Program</div>
+            <h2>Join as a <i>Professional</i></h2>
+            <p class="form-tagline">Fill in your details to start working with us.</p>
+        </div>
+
+        <form id="workerForm">
+            <div class="section-heading">1. Personal Details</div>
+            <div class="row">
+                <div class="col">
+                    <label>Full Name <span style="color:var(--accent)">*</span></label>
+                    <input type="text" id="fname" name="user_name" class="mandatory" placeholder="Enter your full name">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label>Date of Birth <span style="color:var(--accent)">*</span></label>
+                    <div class="custom-datepicker-wrapper">
+                        <div class="custom-select-trigger" id="dateTrigger" onclick="toggleCalendar()">Select Date</div>
+                        <input type="date" id="dob" name="user_dob" class="mandatory">
+                        <div class="calendar-popup" id="calendarPopup">
+                            <div class="calendar-header">
+                                <h4 id="calendarMonth">Month Year</h4>
+                                <div class="calendar-nav">
+                                    <div class="nav-btn" onclick="prevMonth(event)"><i class="fas fa-chevron-left"></i>
+                                    </div>
+                                    <div class="nav-btn" onclick="nextMonth(event)"><i class="fas fa-chevron-right"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="calendar-grid" id="calendarGrid"></div>
+                        </div>
+                    </div>
+                    <span id="dobError" class="error-msg"><i class="fas fa-exclamation-circle"></i> You must be 18 or
+                        older.</span>
+                </div>
+                <div class="col">
+                    <label>Gender <span style="color:var(--accent)">*</span></label>
+                    <div class="custom-select-wrapper" id="genderWrapper">
+                        <div class="custom-select-trigger" onclick="toggleCustomSelect('genderWrapper')">Select Gender
+                        </div>
+                        <select id="gender" name="user_gender" class="mandatory">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <ul class="custom-select-options">
+                            <li class="custom-option" data-value="Male">Male</li>
+                            <li class="custom-option" data-value="Female">Female</li>
+                            <li class="custom-option" data-value="Other">Other</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-heading">2. Contact Details</div>
+            <div class="row">
+                <div class="col">
+                    <label>Phone Number <span style="color:var(--accent)">*</span></label>
+                    <input type="tel" id="mobile" name="user_mobile" class="mandatory" placeholder="10 Digit Number"
+                        maxlength="10">
+                </div>
+                <div class="col">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <label>WhatsApp Number <span style="color:var(--accent)">*</span></label>
+                        <label class="checkbox-container"><input type="checkbox" id="sameNum"> Same as phone</label>
+                    </div>
+                    <input type="tel" id="whatsapp" name="user_whatsapp" class="mandatory"
+                        placeholder="WhatsApp Number">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label>Email Address <span style="color:var(--accent)">*</span></label>
+                    <input type="email" id="email" name="user_email" class="mandatory" placeholder="example@email.com">
+                </div>
+            </div>
+
+            <div class="section-heading">3. Your Location</div>
+            <div class="row">
+                <div class="col">
+                    <label>Pincode <span style="color:var(--accent)">*</span></label>
+                    <input type="number" id="pincode" name="user_pincode" class="mandatory"
+                        placeholder="6 Digit Pincode" pattern="[0-9]{6}">
+                    <span id="pinMsg" class="loading-text"><i class="fas fa-circle-notch fa-spin"></i> Finding your
+                        location...</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label>State <span style="color:var(--accent)">*</span></label>
+                    <div class="custom-select-wrapper" id="stateWrapper">
+                        <div class="custom-select-trigger" onclick="toggleCustomSelect('stateWrapper')">Select State
+                        </div>
+                        <select id="state" name="user_state" class="mandatory">
+                            <option value="">Select State</option>
+                        </select>
+                        <ul class="custom-select-options" id="stateOptions"></ul>
+                    </div>
+                </div>
+                <div class="col">
+                    <label>District <span style="color:var(--accent)">*</span></label>
+                    <div class="custom-select-wrapper" id="districtWrapper">
+                        <div class="custom-select-trigger" onclick="toggleCustomSelect('districtWrapper')">Select
+                            District</div>
+                        <select id="district" name="user_district" class="mandatory">
+                            <option value="">Select District</option>
+                        </select>
+                        <ul class="custom-select-options" id="districtOptions"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label>Full Address <span style="color:var(--accent)">*</span></label>
+                    <input type="text" id="address" name="user_address" class="mandatory"
+                        placeholder="House No., Street, Area...">
+                </div>
+            </div>
+
+            <div class="section-heading">4. Work Experience</div>
+            <div class="row">
+                <div class="col">
+                    <label>Your Service <span style="color:var(--accent)">*</span></label>
+                    <div class="custom-select-wrapper" id="workTypeWrapper">
+                        <div class="custom-select-trigger" onclick="toggleCustomSelect('workTypeWrapper')">Select your
+                            service</div>
+                        <select id="workType" name="user_service" class="mandatory" onchange="toggleOtherWork()">
+                            <option value="">Select your service</option>
+                            <option value="Electrician">Electrician</option>
+                            <option value="Plumber">Plumber</option>
+                            <option value="AC Technician">AC Technician</option>
+                            <option value="Carpenter">Carpenter</option>
+                            <option value="Painter">Painter</option>
+                            <option value="Cleaner">Cleaner</option>
+                            <option value="Mason">Mason</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <ul class="custom-select-options">
+                            <li class="custom-option" data-value="Electrician">Electrician</li>
+                            <li class="custom-option" data-value="Plumber">Plumber</li>
+                            <li class="custom-option" data-value="AC Technician">AC Technician</li>
+                            <li class="custom-option" data-value="Carpenter">Carpenter</li>
+                            <li class="custom-option" data-value="Painter">Painter</li>
+                            <li class="custom-option" data-value="Cleaner">Cleaner</li>
+                            <li class="custom-option" data-value="Mason">Mason</li>
+                            <li class="custom-option" data-value="Other">Other</li>
+                        </ul>
+                    </div>
+                    <div id="otherWorkDiv" style="display:none; margin-top:12px;">
+                        <input type="text" id="otherWorkInput" placeholder="Name your service...">
+                    </div>
+                </div>
+                <div class="col">
+                    <label>Experience (Years) <span style="color:var(--accent)">*</span></label>
+                    <div class="custom-counter">
+                        <button type="button" class="counter-btn" onclick="updateCounter('experience', -1)"><i
+                                class="fas fa-minus"></i></button>
+                        <input type="number" id="experience" name="user_exp" class="mandatory" min="0" value="0"
+                            placeholder="0">
+                        <button type="button" class="counter-btn" onclick="updateCounter('experience', 1)"><i
+                                class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label>Do you have your own tools? <span style="color:var(--accent)">*</span></label>
+                    <div class="custom-select-wrapper" id="toolsWrapper">
+                        <div class="custom-select-trigger" onclick="toggleCustomSelect('toolsWrapper')">Select Option
+                        </div>
+                        <select id="tools" name="user_tools" class="mandatory">
+                            <option value="">Select Option</option>
+                            <option value="Yes, I have all tools">Yes, I have all tools</option>
+                            <option value="I have some tools">I have some tools</option>
+                            <option value="I don't have tools">I don't have tools</option>
+                        </select>
+                        <ul class="custom-select-options">
+                            <li class="custom-option" data-value="Yes, I have all tools">Yes, I have all tools</li>
+                            <li class="custom-option" data-value="I have some tools">I have some tools</li>
+                            <li class="custom-option" data-value="I don't have tools">I don't have tools</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col">
+                    <label>When can you work? <span style="color:var(--accent)">*</span></label>
+                    <div class="custom-select-wrapper" id="availabilityWrapper">
+                        <div class="custom-select-trigger" onclick="toggleCustomSelect('availabilityWrapper')">Select
+                            Option</div>
+                        <select id="availability" name="user_availability" class="mandatory">
+                            <option value="">Select Option</option>
+                            <option value="Full Time / Daily">Full Time / Daily</option>
+                            <option value="Part Time">Part Time</option>
+                            <option value="Only Weekends">Only Weekends</option>
+                        </select>
+                        <ul class="custom-select-options">
+                            <li class="custom-option" data-value="Full Time / Daily">Full Time / Daily</li>
+                            <li class="custom-option" data-value="Part Time">Part Time</li>
+                            <li class="custom-option" data-value="Only Weekends">Only Weekends</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="submitBtn" class="btn-submit" onclick="submitForm()">Join Now</button>
+        </form>
+    </div>
+
+    <!-- Success Screen -->
+    <div class="container success-screen" id="successScreen">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h2>Application Sent!</h2>
+        <div class="app-id-box">Application ID: <span id="displayAppId">Generating...</span></div>
+        <p style="color:var(--text-secondary); font-size:15px; margin-bottom:32px;">We have received your form. We will
+            review it soon.</p>
+
+        <div
+            style="background:rgba(255,255,255,0.02); padding:24px; border-radius:16px; margin:0 auto 32px; font-size:14px; text-align:left; border:1px solid var(--border-subtle); max-width:400px; line-height:1.6; color:var(--text-secondary);">
+            <strong style="color:var(--text-primary); font-size:15px; margin-bottom:12px; display:block;">What happens
+                next?</strong>
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;"><i class="fas fa-check"
+                    style="color:var(--success)"></i> Age Verified (18+)</div>
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;"><i class="fas fa-check"
+                    style="color:var(--success)"></i> Location Saved</div>
+            <div style="display:flex; align-items:center; gap:12px;"><i class="fas fa-envelope"
+                    style="color:var(--accent)"></i> We will contact you via email soon.</div>
+        </div>
+
+        <a href="index.html" class="btn-home">Go to Home</a>
+    </div>
+
+    <!-- JS Form Logic Intact -->
+    <script>
+        // --- CUSTOM SELECT LOGIC ---
+        function toggleCustomSelect(id) {
+            const wrapper = document.getElementById(id);
+            const isOpen = wrapper.classList.contains('open');
+            // Close all other selects
+            document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
+            if (!isOpen) wrapper.classList.add('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            // Dropdown selection
+            if (e.target.classList.contains('custom-option')) {
+                const value = e.target.getAttribute('data-value');
+                const wrapper = e.target.closest('.custom-select-wrapper');
+                const trigger = wrapper.querySelector('.custom-select-trigger');
+                const hiddenSelect = wrapper.querySelector('select');
+
+                trigger.innerText = e.target.innerText;
+                hiddenSelect.value = value;
+                hiddenSelect.dispatchEvent(new Event('change')); // Trigger onchange
+                wrapper.classList.remove('open');
+            }
+            // Close if clicked outside
+            if (!e.target.closest('.custom-select-wrapper') && !e.target.closest('.custom-datepicker-wrapper')) {
+                document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
+                document.getElementById('calendarPopup')?.classList.remove('open');
+            }
+        });
+
+        // --- CUSTOM CALENDAR LOGIC ---
+        let currentYear, currentMonth;
+        let selectedDate = null;
+
+        function initCalendar() {
+            const now = new Date();
+            currentYear = now.getFullYear();
+            currentMonth = now.getMonth();
+            renderCalendar();
+        }
+
+        function toggleCalendar() {
+            const popup = document.getElementById('calendarPopup');
+            popup.classList.toggle('open');
+            if (popup.classList.contains('open')) {
+                document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
+            }
+        }
+
+        function renderCalendar() {
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('calendarMonth').innerText = `${monthNames[currentMonth]} ${currentYear}`;
+
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '<div class="day-label">Su</div><div class="day-label">Mo</div><div class="day-label">Tu</div><div class="day-label">We</div><div class="day-label">Th</div><div class="day-label">Fr</div><div class="day-label">Sa</div>';
+
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div'); empty.className = 'calendar-day empty';
+                grid.appendChild(empty);
+            }
+
+            const today = new Date();
+            for (let i = 1; i <= daysInMonth; i++) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day';
+                day.innerText = i;
+
+                if (currentYear === today.getFullYear() && currentMonth === today.getMonth() && i === today.getDate()) {
+                    day.classList.add('today');
+                }
+
+                if (selectedDate && selectedDate.d === i && selectedDate.m === currentMonth && selectedDate.y === currentYear) {
+                    day.classList.add('selected');
+                }
+
+                day.onclick = (e) => {
+                    e.stopPropagation();
+                    selectDate(i);
+                };
+                grid.appendChild(day);
+            }
+        }
+
+        function prevMonth(e) {
+            e.stopPropagation();
+            currentMonth--;
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            renderCalendar();
+        }
+
+        function nextMonth(e) {
+            e.stopPropagation();
+            currentMonth++;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            renderCalendar();
+        }
+
+        function selectDate(day) {
+            selectedDate = { d: day, m: currentMonth, y: currentYear };
+            const formattedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            document.getElementById('dob').value = formattedDate;
+            document.getElementById('dateTrigger').innerText = formattedDate;
+            document.getElementById('calendarPopup').classList.remove('open');
+            renderCalendar();
+        }
+
+        initCalendar();
+
+        // --- DYNAMIC STATE OPTIONS LOAD ---
+        const stateDistrictData = { "Andhra Pradesh": ["Visakhapatnam", "Vijayawada"], "Delhi": ["Central Delhi", "New Delhi"], "Uttar Pradesh": ["Agra", "Lucknow", "Varanasi", "Etawah", "Kanpur"], "Maharashtra": ["Mumbai", "Pune"] };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const stateSelect = document.getElementById("state");
+            const stateOptions = document.getElementById("stateOptions");
+            if (stateSelect && stateOptions) {
+                Object.keys(stateDistrictData).sort().forEach(state => {
+                    stateSelect.add(new Option(state, state));
+                    const li = document.createElement('li');
+                    li.className = 'custom-option';
+                    li.setAttribute('data-value', state);
+                    li.innerText = state;
+                    stateOptions.appendChild(li);
+                });
+            }
+        });
+
+        function loadDistricts() {
+            const stateSelect = document.getElementById("state");
+            const districtSelect = document.getElementById("district");
+            const districtOptions = document.getElementById("districtOptions");
+            const districtTrigger = document.querySelector('#districtWrapper .custom-select-trigger');
+
+            const selectedState = stateSelect.value;
+            districtSelect.innerHTML = '<option value="">Select Sub-Region</option>';
+            districtOptions.innerHTML = '';
+            districtTrigger.innerText = 'Select District';
+
+            if (selectedState && stateDistrictData[selectedState]) {
+                stateDistrictData[selectedState].sort().forEach(district => {
+                    districtSelect.add(new Option(district, district));
+                    const li = document.createElement('li');
+                    li.className = 'custom-option';
+                    li.setAttribute('data-value', district);
+                    li.innerText = district;
+                    districtOptions.appendChild(li);
+                });
+            }
+        }
+
+        function toggleOtherWork() {
+            const workType = document.getElementById('workType').value; const otherDiv = document.getElementById('otherWorkDiv');
+            if (workType === "Other") { otherDiv.style.display = 'block'; document.getElementById('otherWorkInput').focus(); } else { otherDiv.style.display = 'none'; }
+        }
+
+        document.getElementById('sameNum').addEventListener('change', function () {
+            const mobile = document.getElementById('mobile').value; const wa = document.getElementById('whatsapp');
+            if (this.checked) { if (mobile.length < 10) { alert("Missing Primary Signal"); this.checked = false; } else { wa.value = mobile; wa.readOnly = true; } } else { wa.value = ""; wa.readOnly = false; }
+        });
+
+        document.getElementById('dob').addEventListener('change', function () {
+            let val = this.value; if (!val) return;
+            let dob = new Date(val); let today = new Date(); let age = today.getFullYear() - dob.getFullYear();
+            let m = today.getMonth() - dob.getMonth(); if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) { age--; }
+            const errorSpan = document.getElementById('dobError');
+            if (age < 18) { errorSpan.style.display = 'block'; this.classList.add('input-error'); this.value = ""; }
+            else { errorSpan.style.display = 'none'; this.classList.remove('input-error'); }
+        });
+
+        async function submitForm() {
+            let dobVal = document.getElementById('dob').value;
+            if (dobVal) {
+                let dob = new Date(dobVal); let today = new Date(); let age = today.getFullYear() - dob.getFullYear();
+                if (age < 18) { alert("Insufficient operational age."); return; }
+            }
+
+            let isValid = true;
+            document.querySelectorAll('.mandatory').forEach(f => {
+                if (!f.value.trim()) { f.classList.add('input-error'); isValid = false; }
+                else { f.classList.remove('input-error'); }
+            });
+            if (!isValid) { alert("Resolve incomplete vectors."); return; }
+
+            let mobile = document.getElementById('mobile').value;
+
+            // Generate App ID
+            let count = parseInt(localStorage.getItem('ONEHIVE_APP_COUNTER') || "0") + 1;
+            localStorage.setItem('ONEHIVE_APP_COUNTER', count);
+            let appId = 'OH-PARTNER-' + String(count).padStart(4, '0');
+
+            let service = document.getElementById('workType').value;
+            if (service === "Other") service = document.getElementById('otherWorkInput').value;
+
+            let formData = {
+                app_id: appId,
+                status_level: 1,
+                from_name: document.getElementById('fname').value,
+                dob: document.getElementById('dob').value,
+                gender: document.getElementById('gender').value,
+                mobile: mobile,
+                whatsapp: document.getElementById('whatsapp').value,
+                email: document.getElementById('email').value,
+                pincode: document.getElementById('pincode').value,
+                state: document.getElementById('state').value,
+                district: document.getElementById('district').value,
+                address: document.getElementById('address').value,
+                service: service,
+                experience: parseInt(document.getElementById('experience').value) || 0,
+                tools: document.getElementById('tools').value,
+                availability: document.getElementById('availability').value,
+                login_access: false
+            };
+
+            // Insert into Supabase
+            const { error: insertError } = await window.supabaseClient
+                .from('worker_applications')
+                .insert([formData]);
+
+            if (insertError) {
+                if (insertError.code === '23505') { // Unique violation
+                    alert("This mobile number is already registered.");
+                } else {
+                    alert("Error submitting application: " + insertError.message);
+                }
+                return;
+            }
+
+            // Send Email via EmailJS (using the same formData mapping as before)
+            emailjs.send("service_inkor03", "template_ykdxfxr", {
+                ...formData,
+                reply_to: formData.email // Mapping email to reply_to for transparency
+            }).then(() => showSuccess(appId), () => showSuccess(appId));
+        }
+
+        function showSuccess(id) {
+            document.getElementById('formContainer').style.display = 'none';
+            document.getElementById('successScreen').style.display = 'block';
+            document.getElementById('displayAppId').innerText = id;
+            window.scrollTo(0, 0);
+        }
+
+        document.getElementById('pincode').addEventListener('input', function () {
+            let pin = this.value;
+            if (pin.length === 6) {
+                document.getElementById('pinMsg').style.display = 'block';
+                fetch('https://api.postalpincode.in/pincode/' + pin)
+                    .then(r => r.json()).then(data => {
+                        document.getElementById('pinMsg').style.display = 'none';
+                        if (data && data[0].Status === "Success") {
+                            let d = data[0].PostOffice[0];
+                            const stateSel = document.getElementById("state");
+                            for (let i = 0; i < stateSel.options.length; i++) {
+                                if (stateSel.options[i].text.toLowerCase().includes(d.State.toLowerCase())) {
+                                    stateSel.selectedIndex = i;
+                                    document.querySelector('#stateWrapper .custom-select-trigger').innerText = stateSel.options[i].text;
+                                    loadDistricts(); break;
+                                }
+                            }
+                        }
+                    }).catch(() => { document.getElementById('pinMsg').style.display = 'none'; });
+            }
+        });
+        // --- CUSTOM COUNTER LOGIC ---
+        function updateCounter(id, delta) {
+            const input = document.getElementById(id);
+            let val = parseInt(input.value) || 0;
+            val = Math.max(0, val + delta);
+            input.value = val;
+            input.dispatchEvent(new Event('change'));
+        }
+
+    </script>
+    <!-- Hidden Google Translate Element -->
+    <div id="google_translate_element" style="display:none;"></div>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({ pageLanguage: 'en', autoDisplay: false }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript"
+        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+
+</html>
